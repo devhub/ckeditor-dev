@@ -149,7 +149,14 @@
 					// Horizontally aligned with editable or view port left otherwise right boundary.
 					var newLeft = alignSide == 'left' ? ( editorRect.left > 0 ? editorRect.left : 0 ) : ( editorRect.right < viewRect.width ? viewRect.width - editorRect.right : 0 );
 
-					floatSpace.setStyle( alignSide, pixelate( ( mode == 'pin' ? pinnedOffsetX : dockedOffsetX ) + newLeft + pageScrollX ) );
+          if (editor.elementMode == CKEDITOR.ELEMENT_MODE_INLINE){
+            width = floatSpace.getSize('width', false)
+            floatSpace.setStyle('marginLeft', -(width/2) + "px");
+          }
+          else
+          {
+            floatSpace.setStyle( alignSide, pixelate( ( mode == 'pin' ? pinnedOffsetX : dockedOffsetX ) + newLeft + pageScrollX ) );
+          }
 				}
 			};
 
