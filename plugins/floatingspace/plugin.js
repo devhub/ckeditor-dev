@@ -247,7 +247,15 @@
 				// (#9903) For mode is "top" or "bottom", add opposite scroll-x for right-aligned space.
 				var scroll = mode == 'pin' ? 0 : alignSide == 'left' ? pageScrollX : -pageScrollX;
 
-				floatSpace.setStyle( alignSide, pixelate( ( mode == 'pin' ? pinnedOffsetX : dockedOffsetX ) + offset + scroll ) );
+        if (editor.elementMode == CKEDITOR.ELEMENT_MODE_INLINE){
+          width = floatSpace.getSize('width', false);
+          floatSpace.setStyle('marginLeft', -(width/2) + "px");
+        }
+        else
+        {
+          floatSpace.setStyle( alignSide, pixelate( ( mode == 'pin' ? pinnedOffsetX : dockedOffsetX ) + newLeft + pageScrollX ) );
+        }
+
 			};
 
 		var body = CKEDITOR.document.getBody();
