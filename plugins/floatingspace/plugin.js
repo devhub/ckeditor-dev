@@ -63,6 +63,9 @@
 						case 'pin':
 							updatePos( 'fixed', 'top', pinnedOffsetY );
 							break;
+            case 'topfixed':
+							updatePos( 'fixed', 'top', 0 );
+							break;
 						case 'bottom':
 							updatePos( 'absolute', 'top', editorPos.y + ( editorRect.height || editorRect.bottom - editorRect.top ) + dockedOffsetY );
 							break;
@@ -92,6 +95,15 @@
 					editorRect = editable.getClientRect(),
 					spaceHeight = spaceRect.height,
 					pageScrollX = scrollOffset( 'left' );
+
+        // Fixed top 
+        if ( !mode && editor.elementMode == CKEDITOR.ELEMENT_MODE_INLINE){
+          mode = 'topfixed';
+          changeMode('topfixed');
+          floatSpace.addClass('cke_floating_editor_toolbar');
+          layout(evt);
+          return;
+        }
 
 				// We initialize it as pin mode.
 				if ( !mode ) {
