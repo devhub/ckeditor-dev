@@ -155,6 +155,7 @@
 			 * @see CKEDITOR.editor#insertHtml
 			 */
 			insertHtml: function( data, mode ) {
+				beforeInsert( this );
 				// Default mode is 'html'.
 				insert( this, mode == 'text' ? 'text' : 'html', data );
 			},
@@ -163,6 +164,8 @@
 			 * @see CKEDITOR.editor#insertText
 			 */
 			insertText: function( text ) {
+				beforeInsert( this );
+
 				var editor = this.editor,
 					mode = editor.getSelection().getStartElement().hasAscendant( 'pre', true ) ? CKEDITOR.ENTER_BR : editor.config.enterMode,
 					isEnterBrMode = mode == CKEDITOR.ENTER_BR,
@@ -211,10 +214,7 @@
 			 * @see CKEDITOR.editor#insertElement
 			 */
 			insertElement: function( element ) {
-				// TODO this should be gone after refactoring insertElement.
-				// TODO: For unknown reason we must call directly on the editable to put the focus immediately.
-				this.editor.focus();
-				this.editor.fire( 'saveSnapshot' );
+				beforeInsert( this );
 
 				var editor = this.editor,
 					enterMode = editor.config.enterMode,
@@ -294,14 +294,8 @@
 
 				selection.selectRanges( [ range ] );
 
-				// TODO this should be gone after refactoring insertElement.
-				// Save snaps after the whole execution completed.
-				// This's a workaround for make DOM modification's happened after
-				// 'insertElement' to be included either, e.g. Form-based dialogs' 'commitContents'
-				// call.
-				setTimeout( function() {
-					editor.fire( 'saveSnapshot' );
-				}, 0 );
+				// Do not scroll after inserting, because Opera may fail on certain element (e.g. iframe/iframe.html).
+				afterInsert( this, CKEDITOR.env.opera );
 			},
 
 			/**
@@ -442,12 +436,23 @@
 				editor.keystrokeHandler.attach( this );
 
 				// Update focus states.
-				this.on( 'blur', function() {
+				this.on( 'blur', function( evt ) {
+					// Opera might raise undesired blur event on editable, check if it's
+					// really blurred, otherwise cancel the event. (#9459)
+					if ( CKEDITOR.env.opera ) {
+						var active = CKEDITOR.document.getActive();
+						if ( active.equals( this.isInline() ? this : this.getWindow().getFrame() ) ) {
+							evt.cancel();
+							return;
+						}
+					}
+
 					this.hasFocus = false;
-				});
+				}, null, null, -1 );
+
 				this.on( 'focus', function() {
 					this.hasFocus = true;
-				});
+				}, null, null, -1 );
 
 				// Register to focus manager.
 				editor.focusManager.add( this );
@@ -502,6 +507,9 @@
 				var ref = doc.getCustomData( 'stylesheet_ref' ) || 0;
 				doc.setCustomData( 'stylesheet_ref', ref + 1 );
 
+				// Pass this configuration to styles system.
+				this.setCustomData( 'cke_includeReadonly', !editor.config.disableReadonlyStyling );
+
 				// Prevent the browser opening read-only links. (#6032)
 				this.attachListener( this, 'click', function( ev ) {
 					ev = ev.data;
@@ -521,7 +529,7 @@
 					// Backspace OR Delete.
 					if ( keyCode in { 8:1,46:1 } ) {
 						var sel = editor.getSelection(),
-							selected = sel.getSelectedElement(),
+							selected,
 							range = sel.getRanges()[ 0 ],
 							path = range.startPath(),
 							block,
@@ -529,7 +537,8 @@
 							next,
 							rtl = keyCode == 8;
 
-						if ( selected ) {
+						// Remove the entire list/table on fully selected content. (#7645)
+						if ( ( selected = getSelectedTableList( sel ) ) ) {
 							// Make undo snapshot.
 							editor.fire( 'saveSnapshot' );
 
@@ -538,6 +547,7 @@
 							range.moveToPosition( selected, CKEDITOR.POSITION_BEFORE_START );
 							// Remove the control manually.
 							selected.remove();
+							range.select();
 
 							editor.fire( 'saveSnapshot' );
 
@@ -611,8 +621,13 @@
 				if ( !( CKEDITOR.env.ie || CKEDITOR.env.opera ) ) {
 					this.attachListener( this, 'mousedown', function( ev ) {
 						var control = ev.data.getTarget();
-						if ( control.is( 'img', 'hr', 'input', 'textarea', 'select' ) )
+						if ( control.is( 'img', 'hr', 'input', 'textarea', 'select' ) ) {
 							editor.getSelection().selectElement( control );
+
+							// Prevent focus from stealing from the editable. (#9515)
+							if ( control.is( 'input', 'textarea', 'select' ) )
+								ev.data.preventDefault();
+						}
 					});
 				}
 
@@ -813,6 +828,51 @@
 		};
 	}
 
+	// Check if the entire table/list contents is selected.
+	function getSelectedTableList( sel ) {
+		var selected,
+			range = sel.getRanges()[ 0 ],
+			editable = sel.root,
+			path = range.startPath(),
+			structural = { table:1,ul:1,ol:1,dl:1 };
+
+		var isBogus = CKEDITOR.dom.walker.bogus();
+
+		if ( path.contains( structural ) ) {
+			// Enlarging the start boundary.
+			var walkerRng = range.clone();
+			walkerRng.collapse( 1 );
+			walkerRng.setStartAt( editable, CKEDITOR.POSITION_AFTER_START );
+
+			var walker = new CKEDITOR.dom.walker( walkerRng ),
+				// Check the range is at the inner boundary of the structural element.
+				guard = function( walker, isEnd ) {
+					return function( node, isWalkOut ) {
+						if ( isWalkOut && node.type == CKEDITOR.NODE_ELEMENT && node.is( structural ) )
+							selected = node;
+
+						if ( isNotEmpty( node ) && !isWalkOut && !( isEnd && isBogus( node ) ) )
+							return false;
+					};
+				};
+
+			walker.guard = guard( walker );
+			walker.checkBackward();
+			if ( selected ) {
+				walkerRng = range.clone();
+				walkerRng.collapse();
+				walkerRng.setEndAt( editable, CKEDITOR.POSITION_BEFORE_END );
+				walker = new CKEDITOR.dom.walker( walkerRng );
+				walker.guard = guard( walker, 1 );
+				selected = 0;
+				walker.checkForward();
+				return selected;
+			}
+		}
+
+		return null;
+	}
+
 
 	// Matching an empty paragraph at the end of document.
 	var emptyParagraphRegexp = /(^|<body\b[^>]*>)\s*<(p|div|address|h\d|center|pre)[^>]*>\s*(?:<br[^>]*>|&nbsp;|\u00A0|&#160;)?\s*(:?<\/\2>)?\s*(?=$|<\/body>)/gi;
@@ -871,8 +931,6 @@
 		// Inserts the given (valid) HTML into the range position (with range content deleted),
 		// guarantee it's result to be a valid DOM tree.
 		function insert( editable, type, data ) {
-			beforeInsert( editable );
-
 			var editor = editable.editor,
 				doc = editable.getDocument(),
 				selection = editor.getSelection(),
@@ -931,13 +989,6 @@
 			range.select();
 
 			afterInsert( editable );
-		}
-
-		function beforeInsert( editable ) {
-			// TODO: For unknown reason we must call directly on the editable to put the focus immediately.
-			editable.editor.focus();
-
-			editable.editor.fire( 'saveSnapshot' );
 		}
 
 		// Prepare range to its data deletion.
@@ -1259,21 +1310,6 @@
 
 		}
 
-		function afterInsert( editable ) {
-			var editor = editable.editor;
-
-			// Scroll using selection, not ranges, to affect native pastes.
-			editor.getSelection().scrollIntoView();
-
-			// Save snaps after the whole execution completed.
-			// This's a workaround for make DOM modification's happened after
-			// 'insertElement' to be included either, e.g. Form-based dialogs' 'commitContents'
-			// call.
-			setTimeout( function() {
-				editor.fire( 'saveSnapshot' );
-			}, 0 );
-		}
-
 		//
 		// HELPERS ------------------------------------------------------------
 		//
@@ -1550,6 +1586,28 @@
 
 		return insert;
 	})();
+
+	function beforeInsert( editable ) {
+		// TODO: For unknown reason we must call directly on the editable to put the focus immediately.
+		editable.editor.focus();
+
+		editable.editor.fire( 'saveSnapshot' );
+	}
+
+	function afterInsert( editable, noScroll ) {
+		var editor = editable.editor;
+
+		// Scroll using selection, not ranges, to affect native pastes.
+		!noScroll && editor.getSelection().scrollIntoView();
+
+		// Save snaps after the whole execution completed.
+		// This's a workaround for make DOM modification's happened after
+		// 'insertElement' to be included either, e.g. Form-based dialogs' 'commitContents'
+		// call.
+		setTimeout( function() {
+			editor.fire( 'saveSnapshot' );
+		}, 0 );
+	}
 
 })();
 

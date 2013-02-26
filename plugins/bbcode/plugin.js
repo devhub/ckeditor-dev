@@ -369,7 +369,7 @@
 				checkPendingBrs();
 				checkPending();
 
-				text.replace( /([\r\n])|[^\r\n]*/g, function( piece, lineBreak ) {
+				text.replace( /(\r\n|[\r\n])|[^\r\n]*/g, function( piece, lineBreak ) {
 					if ( lineBreak !== undefined && lineBreak.length )
 						pendingBrs++;
 					else if ( piece.length ) {
@@ -636,7 +636,7 @@
 				elements: {
 					$: function( element ) {
 						var attributes = element.attributes,
-							style = CKEDITOR.tools.parseCssText( attributes.style ),
+							style = CKEDITOR.tools.parseCssText( attributes.style, 1 ),
 							value;
 
 						var tagName = element.name;

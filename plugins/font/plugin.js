@@ -93,7 +93,7 @@
 
 	CKEDITOR.plugins.add( 'font', {
 		requires: 'richcombo',
-		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
+		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
 		init: function( editor ) {
 			var config = editor.config;
 
@@ -170,7 +170,7 @@ CKEDITOR.config.font_style = {
  * The list of fonts size to be displayed in the Font Size combo in the
  * toolbar. Entries are separated by semi-colons (`';'`).
  *
- * Any kind of "CSS like` size can be used, like `'12px'`, `'2.3em'`, `'130%'`,
+ * Any kind of "CSS like" size can be used, like `'12px'`, `'2.3em'`, `'130%'`,
  * `'larger'` or `'x-small'`.
  *
  * A display name may be optionally defined by prefixing the entries with the
@@ -192,8 +192,8 @@ CKEDITOR.config.fontSize_sizes = '8/8px;9/9px;10/10px;11/11px;12/12px;14/14px;16
  * The text to be displayed in the Font Size combo is none of the available
  * values matches the current cursor position or text selection.
  *
- * // If the default site font size is 12px, we may making it more explicit to the end user.
- * config.fontSize_defaultLabel = '12px';
+ *		// If the default site font size is 12px, we may making it more explicit to the end user.
+ *		config.fontSize_defaultLabel = '12px';
  *
  * @cfg {String} [fontSize_defaultLabel='']
  * @member CKEDITOR.config

@@ -2055,12 +2055,12 @@ CKEDITOR.dom.range = function( root ) {
 				return null;
 
 			var walker = new CKEDITOR.dom.walker( walkerRange ),
-				isNotBookmarks = CKEDITOR.dom.walker.bookmark( true ),
-				isNotWhitespaces = CKEDITOR.dom.walker.whitespaces( true ),
-				evaluator = function( node ) {
-					return isNotWhitespaces( node ) && isNotBookmarks( node );
-				};
-			walkerRange.evaluator = evaluator;
+				isNotBookmarks = CKEDITOR.dom.walker.bookmark( false, true ),
+				isNotWhitespaces = CKEDITOR.dom.walker.whitespaces( true );
+
+			walker.evaluator = function( node ) {
+				return isNotWhitespaces( node ) && isNotBookmarks( node );
+			};
 			var node = walker.next();
 			walker.reset();
 			return node && node.equals( walker.previous() ) ? node : null;
@@ -2102,7 +2102,7 @@ CKEDITOR.dom.range = function( root ) {
 			// The reference element contains a zero-width space to avoid
 			// a premature removal. The view is to be scrolled with respect
 			// to this element.
-			var reference = new CKEDITOR.dom.element.createFromHtml( '<span>\u200b</span>', this.document ),
+			var reference = new CKEDITOR.dom.element.createFromHtml( '<span>&nbsp;</span>', this.document ),
 				afterCaretNode, startContainerText, isStartText;
 
 			var range = this.clone();

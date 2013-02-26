@@ -72,6 +72,9 @@
 					}
 
 					mode = newMode;
+
+					// Resize is required between modes switch.
+					resize = 1;
 				}
 
 				// Show up the space on focus gain.
@@ -136,7 +139,12 @@
 				if ( resize ) {
 					var viewRect = win.getViewPaneSize();
 					var mid = viewRect.width / 2;
-					var alignSide = ( editorRect.left > 0 && editorRect.right < viewRect.width && editorRect.width > spaceRect.width ) ? ( editor.lang.dir == 'rtl' ? 'right' : 'left' ) : ( mid - editorRect.left > editorRect.right - mid ? 'left' : 'right' );
+					var alignSide =
+								( editorRect.left > 0 && editorRect.right < viewRect.width &&
+									editorRect.width > spaceRect.width ) ?
+								( editor.config.contentsLangDirection == 'rtl' ? 'right' : 'left' ) :
+								( mid - editorRect.left > editorRect.right - mid ? 'left' :
+								 'right' );
 
 					// Horizontally aligned with editable or view port left otherwise right boundary.
 					var newLeft = alignSide == 'left' ? ( editorRect.left > 0 ? editorRect.left : 0 ) : ( editorRect.right < viewRect.width ? viewRect.width - editorRect.right : 0 );
@@ -166,6 +174,13 @@
 
 			// There's no need for the floatSpace to be selectable.
 			floatSpace.unselectable();
+
+			// Prevent clicking on non-buttons area of the space from blurring editor.
+			floatSpace.on( 'mousedown', function( evt ) {
+				evt = evt.data;
+				if ( !evt.getTarget().hasAscendant( 'a', 1 ) )
+					evt.preventDefault();
+			});
 
 			editor.on( 'focus', function( evt ) {
 				layout( evt );
@@ -213,7 +228,7 @@
  * amount of offset (in pixels) between float space and the editable top/bottom
  * boundaries when space element is docked at either side of the editable.
  *
- * config.floatSpaceDockedOffsetY = 10;
+ *		config.floatSpaceDockedOffsetY = 10;
  *
  * @cfg {Number} [floatSpaceDockedOffsetY=0]
  * @member CKEDITOR.config
@@ -226,7 +241,7 @@
  *
  *		config.floatSpacePinnedOffsetX = 20;
  *
- * @cfg {Number} [floatSpacePinnedOffsetX=10]
+ * @cfg {Number} [floatSpacePinnedOffsetX=0]
  * @member CKEDITOR.config
  */
 

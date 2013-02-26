@@ -5,7 +5,7 @@
 
 CKEDITOR.plugins.add( 'format', {
 	requires: 'richcombo',
-	lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
+	lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
 	init: function( editor ) {
 		if ( editor.blockless )
 			return;
@@ -63,13 +63,15 @@ CKEDITOR.plugins.add( 'format', {
 
 			onRender: function() {
 				editor.on( 'selectionChange', function( ev ) {
-					var currentTag = this.getValue();
 
-					var elementPath = ev.data.path;
+					var currentTag = this.getValue(),
+						elementPath = ev.data.path,
+						isEnabled = !editor.readOnly && elementPath.isContextFor( 'p' );
 
 					// Disable the command when selection path is "blockless".
-					if ( elementPath.isContextFor( 'p' ) ) {
-						this.setState( CKEDITOR.TRISTATE_OFF );
+					this[ isEnabled ? 'enable' : 'disable' ]();
+
+					if ( isEnabled ) {
 
 						for ( var tag in styles ) {
 							if ( styles[ tag ].checkActive( elementPath ) ) {
@@ -78,11 +80,10 @@ CKEDITOR.plugins.add( 'format', {
 								return;
 							}
 						}
-					} else
-						this.setState( CKEDITOR.TRISTATE_DISABLED );
 
-					// If no styles match, just empty it.
-					this.setValue( '' );
+						// If no styles match, just empty it.
+						this.setValue( '' );
+					}
 				}, this );
 			}
 		});

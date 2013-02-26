@@ -307,7 +307,7 @@
 	CKEDITOR.plugins.add( 'indent', {
 		// TODO: Remove this dependency.
 		requires: 'list',
-		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
+		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
 		icons: 'indent,indent-rtl,outdent,outdent-rtl', // %REMOVE_LINE_CORE%
 		onLoad: function() {
 			// [IE6/7] Raw lists are using margin instead of padding for visual indentation in wysiwyg mode. (#3893)
@@ -333,11 +333,13 @@
 				editor.ui.addButton( 'Indent', {
 					label: editor.lang.indent.indent,
 					command: 'indent',
+					directional: true,
 					toolbar: 'indent,20'
 				});
 				editor.ui.addButton( 'Outdent', {
 					label: editor.lang.indent.outdent,
 					command: 'outdent',
+					directional: true,
 					toolbar: 'indent,10'
 				});
 			}
@@ -397,7 +399,7 @@
 /**
  * Unit for the indentation style.
  *
- * config.indentUnit = 'em';
+ *		config.indentUnit = 'em';
  *
  * @cfg {String} [indentUnit='px']
  * @member CKEDITOR.config

@@ -39,8 +39,12 @@
 	}
 
 	function handleMixedDirContent( editor, path ) {
-		var directionNode = path.block || path.blockLimit;
-		editor.fire( 'contentDirChanged', directionNode ? directionNode.getComputedStyle( 'direction' ) : editor.lang.dir );
+		var directionNode = path.block || path.blockLimit || editor.editable();
+		var pathDir = directionNode.getDirection( 1 );
+		if ( pathDir != ( editor._.selDir || editor.lang.dir ) ) {
+			editor._.selDir = pathDir;
+			editor.fire( 'contentDirChanged', pathDir );
+		}
 	}
 
 	// Returns element with possibility of applying the direction.
@@ -187,7 +191,7 @@
 	}
 
 	CKEDITOR.plugins.add( 'bidi', {
-		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
+		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
 		icons: 'bidiltr,bidirtl', // %REMOVE_LINE_CORE%
 		init: function( editor ) {
 			if ( editor.blockless )
@@ -195,21 +199,22 @@
 
 			// All buttons use the same code to register. So, to avoid
 			// duplications, let's use this tool function.
-			var addButtonCommand = function( buttonName, buttonLabel, commandName, commandDef, order ) {
-					editor.addCommand( commandName, new CKEDITOR.command( editor, commandDef ) );
+			function addButtonCommand( buttonName, buttonLabel, commandName, commandDef, order ) {
+				editor.addCommand( commandName, new CKEDITOR.command( editor, commandDef ) );
 
-					if ( editor.ui.addButton ) {
-						editor.ui.addToolbarGroup( 'bidi', 'align', 'paragraph' );
-
-						editor.ui.addButton( buttonName, {
-							label: buttonLabel,
-							command: commandName,
-							toolbar: 'bidi,' + order
-						});
-					}
-				};
+				if ( editor.ui.addButton ) {
+					editor.ui.addButton( buttonName, {
+						label: buttonLabel,
+						command: commandName,
+						toolbar: 'bidi,' + order
+					});
+				}
+			}
 
 			var lang = editor.lang.bidi;
+
+			if ( editor.ui.addToolbarGroup )
+				editor.ui.addToolbarGroup( 'bidi', 'align', 'paragraph' );
 
 			addButtonCommand( 'BidiLtr', lang.ltr, 'bidiltr', bidiCommand( 'ltr' ), 10 );
 			addButtonCommand( 'BidiRtl', lang.rtl, 'bidirtl', bidiCommand( 'rtl' ), 20 );
@@ -221,6 +226,14 @@
 						dir: evt.data.getDirection( 1 )
 					});
 				});
+			});
+
+			// Indicate that the current selection is in different direction than the UI.
+			editor.on( 'contentDirChanged', function( evt ) {
+				var func = ( editor.lang.dir != evt.data ? 'add' : 'remove' ) + 'Class';
+				var toolbar = editor.ui.space( editor.config.toolbarLocation );
+				if ( toolbar )
+					toolbar[ func ]( 'cke_mixed_dir_content' );
 			});
 		}
 	});

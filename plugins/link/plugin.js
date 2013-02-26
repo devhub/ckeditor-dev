@@ -5,18 +5,17 @@
 
 CKEDITOR.plugins.add( 'link', {
 	requires: 'dialog,fakeobjects',
-	lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
+	lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
 	icons: 'anchor,anchor-rtl,link,unlink', // %REMOVE_LINE_CORE%
 	onLoad: function() {
 		// Add the CSS styles for anchor placeholders.
-		var baseStyle = 'background:url(' + CKEDITOR.getUrl( this.path + 'images/anchor.gif' ) + ') no-repeat %1 center;' +
+		var baseStyle = 'background:url(' + CKEDITOR.getUrl( this.path + 'images/anchor.png' ) + ') no-repeat %1 center;' +
 			'border:1px dotted #00f;';
 
 		var template = '.%2 a.cke_anchor,' +
 			'.%2 a.cke_anchor_empty' +
-			// IE6 breaks with the following selectors.
-			( ( CKEDITOR.env.ie && CKEDITOR.env.version < 7 ) ? '' : ',.cke_editable.%2 a[name]' +
-			',.cke_editable.%2 a[data-cke-saved-name]' ) +
+			',.cke_editable.%2 a[name]' +
+			',.cke_editable.%2 a[data-cke-saved-name]' +
 			'{' +
 				baseStyle +
 				'padding-%1:18px;' +

@@ -80,6 +80,10 @@ CKEDITOR.plugins.add( 'floatpanel', {
 			editor.on( 'mode', function() {
 				this.hide();
 			}, this );
+
+			editor.on( 'resize', function() {
+				this.hide();
+			}, this );
 		},
 
 		proto: {
@@ -138,6 +142,8 @@ CKEDITOR.plugins.add( 'floatpanel', {
 
 				var element = this.element,
 					iframe = this._.iframe,
+					// Non IE prefer the event into a window object.
+					focused = CKEDITOR.env.ie ? iframe : new CKEDITOR.dom.window( iframe.$.contentWindow ),
 					doc = element.getDocument(),
 					positionedAncestor = this._.parentElement.getPositionedAncestor(),
 					position = offsetParent.getDocumentPosition( doc ),
@@ -171,10 +177,11 @@ CKEDITOR.plugins.add( 'floatpanel', {
 				// To allow the context menu to decrease back their width
 				element.getFirst().removeStyle( 'width' );
 
+				// Report to focus manager.
+				this._.editor.focusManager.add( focused );
+
 				// Configure the IFrame blur event. Do that only once.
 				if ( !this._.blurSet ) {
-					// Non IE prefer the event into a window object.
-					var focused = CKEDITOR.env.ie ? iframe : new CKEDITOR.dom.window( iframe.$.contentWindow );
 
 					// With addEventListener compatible browsers, we must
 					// useCapture when registering the focus/blur events to
@@ -206,9 +213,6 @@ CKEDITOR.plugins.add( 'floatpanel', {
 
 					CKEDITOR.event.useCapture = false;
 
-					// Report to focus manager.
-					this._.editor.focusManager.add( focused );
-
 					this._.blurSet = 1;
 				}
 
@@ -226,16 +230,9 @@ CKEDITOR.plugins.add( 'floatpanel', {
 						target.removeStyle( 'width' );
 
 						if ( block.autoSize ) {
-							// We must adjust first the width or IE6 could include extra lines in the height computation
-							var widthNode = block.element.$;
+							var panelDoc = block.element.getDocument();
+							var width = ( CKEDITOR.env.webkit? block.element : panelDoc.getBody() )[ '$' ].scrollWidth;
 
-							if ( CKEDITOR.env.gecko || CKEDITOR.env.opera )
-								widthNode = widthNode.parentNode;
-
-							if ( CKEDITOR.env.ie )
-								widthNode = widthNode.document.body;
-
-							var width = widthNode.scrollWidth;
 							// Account for extra height needed due to IE quirks box model bug:
 							// http://en.wikipedia.org/wiki/Internet_Explorer_box_model_bug
 							// (#3426)

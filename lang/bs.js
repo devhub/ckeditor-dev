@@ -48,7 +48,7 @@ CKEDITOR.lang[ 'bs' ] = {
 		textField: 'Text Field', // MISSING
 		textarea: 'Textarea', // MISSING
 		hiddenField: 'Hidden Field', // MISSING
-		button: 'Button', // MISSING
+		button: 'Button',
 		select: 'Selection Field', // MISSING
 		imageButton: 'Image Button', // MISSING
 		notSet: '<nije podešeno>',
@@ -65,7 +65,7 @@ CKEDITOR.lang[ 'bs' ] = {
 		ok: 'OK',
 		cancel: 'Odustani',
 		close: 'Close', // MISSING
-		preview: 'Preview', // MISSING
+		preview: 'Prikaži',
 		resize: 'Resize', // MISSING
 		generalTab: 'General', // MISSING
 		advancedTab: 'Naprednije',
@@ -73,15 +73,15 @@ CKEDITOR.lang[ 'bs' ] = {
 		confirmNewPage: 'Any unsaved changes to this content will be lost. Are you sure you want to load new page?', // MISSING
 		confirmCancel: 'Some of the options have been changed. Are you sure to close the dialog?', // MISSING
 		options: 'Options', // MISSING
-		target: 'Target', // MISSING
+		target: 'Prozor',
 		targetNew: 'New Window (_blank)', // MISSING
 		targetTop: 'Topmost Window (_top)', // MISSING
 		targetSelf: 'Same Window (_self)', // MISSING
 		targetParent: 'Parent Window (_parent)', // MISSING
-		langDirLTR: 'Left to Right (LTR)', // MISSING
-		langDirRTL: 'Right to Left (RTL)', // MISSING
-		styles: 'Style', // MISSING
-		cssClasses: 'Stylesheet Classes', // MISSING
+		langDirLTR: 'S lijeva na desno (LTR)',
+		langDirRTL: 'S desna na lijevo (RTL)',
+		styles: 'Stil',
+		cssClasses: 'Klase CSS stilova',
 		width: 'Širina',
 		height: 'Visina',
 		align: 'Poravnanje',
@@ -91,6 +91,7 @@ CKEDITOR.lang[ 'bs' ] = {
 		alignTop: 'Vrh',
 		alignMiddle: 'Sredina',
 		alignBottom: 'Dno',
+		invalidValue	: 'Invalid value.', // MISSING
 		invalidHeight: 'Height must be a number.', // MISSING
 		invalidWidth: 'Width must be a number.', // MISSING
 		invalidCssLength: 'Value specified for the "%1" field must be a positive number with or without a valid CSS measurement unit (px, %, in, cm, mm, em, ex, pt, or pc).', // MISSING

@@ -78,10 +78,10 @@ CKEDITOR.lang[ 'pt' ] = {
 		targetTop: 'Janela superior (_top)',
 		targetSelf: 'Mesma janela (_self)',
 		targetParent: 'Parent Window (_parent)', // MISSING
-		langDirLTR: 'Left to Right (LTR)', // MISSING
+		langDirLTR: 'Esquerda à Direita (LTR)',
 		langDirRTL: 'Direita para Esquerda (RTL)',
 		styles: 'Estilo',
-		cssClasses: 'Stylesheet Classes', // MISSING
+		cssClasses: 'Classes de Estilo de Folhas Classes',
 		width: 'Largura',
 		height: 'Altura',
 		align: 'Alinhamento',
@@ -91,6 +91,7 @@ CKEDITOR.lang[ 'pt' ] = {
 		alignTop: 'Topo',
 		alignMiddle: 'Centro',
 		alignBottom: 'Fundo',
+		invalidValue	: 'Invalid value.', // MISSING
 		invalidHeight: 'Height must be a number.', // MISSING
 		invalidWidth: 'Width must be a number.', // MISSING
 		invalidCssLength: 'Value specified for the "%1" field must be a positive number with or without a valid CSS measurement unit (px, %, in, cm, mm, em, ex, pt, or pc).', // MISSING

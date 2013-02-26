@@ -30,6 +30,9 @@
 		// Call the CKEDITOR.event constructor to initialize this instance.
 		CKEDITOR.event.call( this );
 
+		// Make a clone of the config object, to avoid having it touched by our code. (#9636)
+		instanceConfig = instanceConfig && CKEDITOR.tools.clone( instanceConfig );
+
 		// if editor is created off one page element.
 		if ( element !== undefined ) {
 			// Asserting element and mode not null.
@@ -107,7 +110,7 @@
 		 * the page when creating the editor.
 		 *
 		 *		var editor = CKEDITOR.instances.editor1;
-		 *		alert( editor.config.skin ); // e.g. 'kama'
+		 *		alert( editor.config.skin ); // e.g. 'moono'
 		 *
 		 * @property {CKEDITOR.config}
 		 */
@@ -348,7 +351,7 @@
 			 *
 			 *		alert( editor.lang.basicstyles.bold ); // e.g. 'Negrito' (if the language is set to Portuguese)
 			 *
-			 * @property {CKEDITOR.lang} lang
+			 * @property {Object} lang
 			 */
 			// As we'll be adding plugin specific entries that could come
 			// from different language code files, we need a copy of lang,
@@ -378,14 +381,14 @@
 
 		if ( extraPlugins ) {
 			// Remove them first to avoid duplications.
-			var removeRegex = new RegExp( '(?:^|,)(?:' + extraPlugins.replace( /\s*,\s*/g, '|' ) + ')(?=,|$)', 'g' );
-			plugins = plugins.replace( removeRegex, '' );
+			var extraRegex = new RegExp( '(?:^|,)(?:' + extraPlugins.replace( /\s*,\s*/g, '|' ) + ')(?=,|$)', 'g' );
+			plugins = plugins.replace( extraRegex, '' );
 
 			plugins += ',' + extraPlugins;
 		}
 
 		if ( removePlugins ) {
-			removeRegex = new RegExp( '(?:^|,)(?:' + removePlugins.replace( /\s*,\s*/g, '|' ) + ')(?=,|$)', 'g' );
+			var removeRegex = new RegExp( '(?:^|,)(?:' + removePlugins.replace( /\s*,\s*/g, '|' ) + ')(?=,|$)', 'g' );
 			plugins = plugins.replace( removeRegex, '' );
 		}
 
@@ -409,6 +412,11 @@
 			 * editor instance.
 			 *
 			 *		alert( editor.plugins.dialog.path ); // e.g. 'http://example.com/ckeditor/plugins/dialog/'
+			 *
+			 *		// Check if a plugin is available.
+			 *		if ( editor.plugins.image ) {
+			 *			...
+			 *		}
 			 *
 			 * @property {Object}
 			 */
@@ -445,8 +453,21 @@
 						pluginLangs = pluginLangs.split( ',' );
 
 					// Resolve the plugin language. If the current language
-					// is not available, get the first one (default one).
-					lang = ( CKEDITOR.tools.indexOf( pluginLangs, editor.langCode ) >= 0 ? editor.langCode : pluginLangs[ 0 ] );
+					// is not available, get English or the first one.
+					if ( CKEDITOR.tools.indexOf( pluginLangs, editor.langCode ) >= 0 )
+						lang = editor.langCode;
+					else {
+						// The language code may have the locale information (zh-cn).
+						// Fall back to locale-less in that case (zh).
+						var langPart = editor.langCode.replace( /-.*/, '' );
+						if ( langPart != editor.langCode && CKEDITOR.tools.indexOf( pluginLangs, langPart ) >= 0 )
+							lang = langPart;
+						// Try the only "generic" option we have: English.
+						else if ( CKEDITOR.tools.indexOf( pluginLangs, 'en' ) >= 0 )
+							lang = 'en';
+						else
+							lang = pluginLangs[ 0 ];
+					}
 
 					if ( !plugin.langEntries || !plugin.langEntries[ lang ] ) {
 						// Put the language file URL into the list of files to
@@ -882,6 +903,19 @@
 		 *			[ CKEDITOR.CTRL + 121, 'link' ],
 		 *			[ CKEDITOR.SHIFT + 120, 'bold' ]
 		 *		] );
+		 *
+		 * This method may be used in the following cases:
+		 *
+		 * * By plugins (like `link` or `basicstyles`) to set their keystrokes when plugins are being loaded.
+		 * * During the runtime to modify existing keystrokes.
+		 *
+		 * The editor handles keystroke configuration in the following order:
+		 *
+		 * 1. Plugins use this method to define default keystrokes.
+		 * 2. Editor extends default keystrokes with {@link CKEDITOR.config#keystrokes}.
+		 * 3. Editor blocks keystrokes defined in {@link CKEDITOR.config#blockedKeystrokes}.
+		 *
+		 * After all, you can still set new keystrokes using this method during the runtime.
 		 *
 		 * @since 4.0
 		 * @param {Number/Array} keystroke Keystroke or an array of keystroke definitions.

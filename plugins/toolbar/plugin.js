@@ -49,7 +49,7 @@
 
 	CKEDITOR.plugins.add( 'toolbar', {
 		requires: 'button',
-		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
+		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
 
 		init: function( editor ) {
 			var endFlag;
@@ -151,21 +151,22 @@
 				if ( event.data.space == editor.config.toolbarLocation ) {
 					editor.toolbox = new toolbox();
 
-					var labelId = CKEDITOR.tools.getNextId();
+					var labelId = CKEDITOR.tools.getNextId(),
+						removeButtons = editor.config.removeButtons;
+
+					removeButtons = removeButtons && removeButtons.split( ',' );
 
 					var output = [
 						'<span id="', labelId, '" class="cke_voice_label">', editor.lang.toolbar.toolbars, '</span>',
-						'<span id="' + editor.ui.spaceId( 'toolbox' ) + '" class="cke_toolbox" role="group" aria-labelledby="', labelId, '" onmousedown="return false;"' ];
+						'<span id="' + editor.ui.spaceId( 'toolbox' ) + '" class="cke_toolbox" role="group" aria-labelledby="', labelId, '" onmousedown="return false;">' ];
 
 					var expanded = editor.config.toolbarStartupExpanded !== false,
 						groupStarted, pendingSeparator;
 
-					output.push( expanded ? '>' : ' style="display:none">' );
-
 					// If the toolbar collapser will be available, we'll have
 					// an additional container for all toolbars.
-					if ( editor.config.toolbarCanCollapse )
-						output.push( '<span class="cke_toolbox_main">' );
+					if ( editor.config.toolbarCanCollapse && editor.elementMode != CKEDITOR.ELEMENT_MODE_INLINE )
+						output.push( '<span class="cke_toolbox_main"' + ( expanded ? '>' : ' style="display:none">' ) );
 
 					var toolbars = editor.toolbox.toolbars,
 						toolbar = getToolbarConfig( editor );
@@ -203,6 +204,10 @@
 							var item,
 								itemName = items[ i ],
 								canGroup;
+
+							// Ignore items that are configured to be removed.
+							if ( removeButtons && CKEDITOR.tools.indexOf( removeButtons, itemName ) >= 0 )
+								continue;
 
 							item = editor.ui.create( itemName );
 
@@ -410,7 +415,7 @@
 
 			// Take the base for the new toolbar, which is basically a toolbar
 			// definition without items.
-			var toolbar = editor.config.toolbarGroups || getPrivateToolbarGroups( editor );
+			var toolbar = CKEDITOR.tools.clone( editor.config.toolbarGroups ) || getPrivateToolbarGroups( editor );
 
 			// Fill the toolbar groups with the available ui items.
 			for ( var i = 0; i < toolbar.length; i++ ) {
@@ -682,6 +687,10 @@ CKEDITOR.config.toolbarLocation = 'top';
 /**
  * Whether the toolbar must start expanded when the editor is loaded.
  *
+ * Setting this option to `false` will affect toolbar only when
+ * {@link #toolbarCanCollapse} is set to `true`:
+ *
+ *		config.toolbarCanCollapse = true;
  *		config.toolbarStartupExpanded = false;
  *
  * @cfg {Boolean} [toolbarStartupExpanded=true]
@@ -690,7 +699,7 @@ CKEDITOR.config.toolbarLocation = 'top';
 
 /**
  * When enabled, makes the arrow keys navigation cycle within the current
- * toolbar group. Otherwise the arrows will move trought all items available in
+ * toolbar group. Otherwise the arrows will move through all items available in
  * the toolbar. The *TAB* key will still be used to quickly jump among the
  * toolbar groups.
  *
@@ -698,6 +707,21 @@ CKEDITOR.config.toolbarLocation = 'top';
  *
  * @since 3.6
  * @cfg {Boolean} [toolbarGroupCycling=true]
+ * @member CKEDITOR.config
+ */
+
+/**
+ * List of toolbar button names that must not be rendered. This will work as
+ * well for non-button toolbar items, like the Font combos.
+ *
+ *		config.removeButtons = 'Underline,JustifyCenter';
+ *
+ * This configuration should not be overused, having
+ * {@link CKEDITOR.config#removePlugins} removing features from the editor. In
+ * some cases though, a single plugin may define a set of toolbar buttons and
+ * removeButtons may be useful when just a few of them are to be removed.
+ *
+ * @cfg {String} [removeButtons]
  * @member CKEDITOR.config
  */
 

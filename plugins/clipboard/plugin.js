@@ -84,7 +84,7 @@
 	// Register the plugin.
 	CKEDITOR.plugins.add( 'clipboard', {
 		requires: 'dialog',
-		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
+		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
 		icons: 'copy,copy-rtl,cut,cut-rtl,paste,paste-rtl', // %REMOVE_LINE_CORE%
 		init: function( editor ) {
 			var textificationFilter;
@@ -93,11 +93,11 @@
 
 			CKEDITOR.dialog.add( 'paste', CKEDITOR.getUrl( this.path + 'dialogs/paste.js' ) );
 
-			// Filter webkit garbage.
 			editor.on( 'paste', function( evt ) {
 				var data = evt.data.dataValue,
 					blockElements = CKEDITOR.dtd.$block;
 
+				// Filter webkit garbage.
 				if ( data.indexOf( 'Apple-' ) > -1 ) {
 					// Replace special webkit's &nbsp; with simple space, because webkit
 					// produces them even for normal spaces.
@@ -121,6 +121,25 @@
 
 					// Remove all other classes.
 					data = data.replace( /(<[^>]+) class="Apple-[^"]*"/gi, '$1' );
+				}
+
+				// Strip editable that was copied from inside. (#9534)
+				if ( data.match( /^<[^<]+cke_(editable|contents)/i ) ) {
+					var tmp,
+						editable_wrapper,
+						wrapper = new CKEDITOR.dom.element( 'div' );
+
+					wrapper.setHtml( data );
+					// Verify for sure and check for nested editor UI parts. (#9675)
+					while ( wrapper.getChildCount() == 1 &&
+							( tmp = wrapper.getFirst() ) &&
+							( tmp.hasClass( 'cke_editable' ) || tmp.hasClass( 'cke_contents' ) ) ) {
+						wrapper = editable_wrapper = tmp;
+					}
+
+					// If editable wrapper was found strip it and bogus <br> (added on FF).
+					if ( editable_wrapper )
+						data = editable_wrapper.getHtml().replace( /<br>$/i, '' );
 				}
 
 				if ( CKEDITOR.env.ie ) {
@@ -651,17 +670,18 @@
 
 			pastebin.setAttribute( 'id', 'cke_pastebin' );
 
+			// Append bogus to prevent Opera from doing this. (#9522)
+			if ( CKEDITOR.env.opera )
+				pastebin.appendBogus();
+
 			var containerOffset = 0,
 				win = doc.getWindow();
 
 			// Seems to be the only way to avoid page scroll in Fx 3.x.
-			if ( ff3x )
-			{
+			if ( ff3x ) {
 				pastebin.insertAfter( bms[ 0 ].startNode );
 				pastebin.setStyle( 'display', 'inline' );
-			}
-			else
-			{
+			} else {
 				if ( CKEDITOR.env.webkit ) {
 					// It's better to paste close to the real paste destination, so inherited styles
 					// (which Webkits will try to compensate by styling span) differs less from the destination's one.
@@ -707,33 +727,41 @@
 			// Temporarily move selection to the pastebin.
 			isEditingHost && pastebin.focus();
 			var range = new CKEDITOR.dom.range( pastebin );
-			range.setStartAt( pastebin, CKEDITOR.POSITION_AFTER_START );
-			range.setEndAt( pastebin, CKEDITOR.POSITION_BEFORE_END );
-			range.select();
+			range.selectNodeContents( pastebin );
+			var selPastebin = range.select();
+
+			// If non-native paste is executed, IE will open security alert and blur editable.
+			// Editable will then lock selection inside itself and after accepting security alert
+			// this selection will be restored. We overwrite stored selection, so it's restored
+			// in pastebin. (#9552)
+			if ( CKEDITOR.env.ie ) {
+				var blurListener = editable.once( 'blur', function( evt ) {
+					editor.lockSelection( selPastebin );
+				} );
+			}
 
 			// Wait a while and grab the pasted contents.
 			setTimeout( function() {
-
-				// Cancel the locked selection.
-				editor.unlockSelection();
+				// Blur will be fired only on non-native paste. In other case manually remove listener.
+				blurListener && blurListener.removeListener();
 
 				// Restore properly the document focus. (#8849)
 				if ( CKEDITOR.env.ie )
 					editable.focus();
+
+				// IE7: selection must go before removing pastebin. (#8691)
+				sel.selectBookmarks( bms );
+				pastebin.remove();
 
 				// Grab the HTML contents.
 				// We need to look for a apple style wrapper on webkit it also adds
 				// a div wrapper if you copy/paste the body of the editor.
 				// Remove hidden div and restore selection.
 				var bogusSpan;
-				pastebin = ( CKEDITOR.env.webkit && ( bogusSpan = pastebin.getFirst() ) && ( bogusSpan.is && bogusSpan.hasClass( 'Apple-style-span' ) ) ? bogusSpan : pastebin );
-
-				// IE7: selection must go before removing pastebin. (#8691)
-				sel.selectBookmarks( bms );
+				if ( CKEDITOR.env.webkit && ( bogusSpan = pastebin.getFirst() ) && ( bogusSpan.is && bogusSpan.hasClass( 'Apple-style-span' ) ) )
+					pastebin = bogusSpan;
 
 				editor.removeListener( 'selectionChange', cancel );
-
-				pastebin.remove();
 				callback( pastebin.getHtml() );
 			}, 0 );
 		}
@@ -772,6 +800,8 @@
 					return false;
 				}
 			}
+
+			return true;
 		}
 
 		// Listens for some clipboard related keystrokes, so they get customized.

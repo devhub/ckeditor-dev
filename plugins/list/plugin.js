@@ -596,9 +596,15 @@
 		},
 
 		refresh: function( editor, path ) {
-			var limit = path.blockLimit || path.root;
-			var list = path.contains( this.type, 1 );
-			list && limit.contains( list ) ? this.setState( CKEDITOR.TRISTATE_ON ) : this.setState( CKEDITOR.TRISTATE_OFF );
+			var list = path.contains( listNodeNames, 1 ),
+				limit = path.blockLimit || path.root;
+
+			// 1. Only a single type of list activate.
+			// 2. Do not show list outside of block limit.
+			if ( list && limit.contains( list ) )
+				this.setState( list.is( this.type ) ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF );
+			else
+				this.setState( CKEDITOR.TRISTATE_OFF );
 		}
 	};
 
@@ -743,7 +749,7 @@
 	}
 
 	CKEDITOR.plugins.add( 'list', {
-		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
+		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en-au,en-ca,en-gb,en,eo,es,et,eu,fa,fi,fo,fr-ca,fr,gl,gu,he,hi,hr,hu,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt-br,pt,ro,ru,sk,sl,sr-latn,sr,sv,th,tr,ug,uk,vi,zh-cn,zh', // %REMOVE_LINE_CORE%
 		icons: 'bulletedlist,bulletedlist-rtl,numberedlist,numberedlist-rtl', // %REMOVE_LINE_CORE%
 		init: function( editor ) {
 			if ( editor.blockless )
@@ -758,11 +764,13 @@
 				editor.ui.addButton( 'NumberedList', {
 					label: editor.lang.list.numberedlist,
 					command: 'numberedlist',
+					directional: true,
 					toolbar: 'list,10'
 				});
 				editor.ui.addButton( 'BulletedList', {
 					label: editor.lang.list.bulletedlist,
 					command: 'bulletedlist',
+					directional: true,
 					toolbar: 'list,20'
 				});
 			}
@@ -780,7 +788,7 @@
 					if ( !range.collapsed )
 						return;
 
-					var path = new CKEDITOR.dom.elementPath( range.startContainer );
+					path = new CKEDITOR.dom.elementPath( range.startContainer );
 					var isBackspace = key == 8;
 					var editable = editor.editable();
 					var walker = new CKEDITOR.dom.walker( range.clone() );

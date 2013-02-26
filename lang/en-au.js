@@ -65,7 +65,7 @@ CKEDITOR.lang[ 'en-au' ] = {
 		ok: 'OK',
 		cancel: 'Cancel',
 		close: 'Close', // MISSING
-		preview: 'Preview', // MISSING
+		preview: 'Preview',
 		resize: 'Resize', // MISSING
 		generalTab: 'General',
 		advancedTab: 'Advanced',
@@ -73,15 +73,15 @@ CKEDITOR.lang[ 'en-au' ] = {
 		confirmNewPage: 'Any unsaved changes to this content will be lost. Are you sure you want to load new page?',
 		confirmCancel: 'Some of the options have been changed. Are you sure to close the dialog?',
 		options: 'Options', // MISSING
-		target: 'Target', // MISSING
+		target: 'Target',
 		targetNew: 'New Window (_blank)', // MISSING
 		targetTop: 'Topmost Window (_top)', // MISSING
 		targetSelf: 'Same Window (_self)', // MISSING
 		targetParent: 'Parent Window (_parent)', // MISSING
-		langDirLTR: 'Left to Right (LTR)', // MISSING
-		langDirRTL: 'Right to Left (RTL)', // MISSING
-		styles: 'Style', // MISSING
-		cssClasses: 'Stylesheet Classes', // MISSING
+		langDirLTR: 'Left to Right (LTR)',
+		langDirRTL: 'Right to Left (RTL)',
+		styles: 'Style',
+		cssClasses: 'Stylesheet Classes',
 		width: 'Width', // MISSING
 		height: 'Height', // MISSING
 		align: 'Align',
@@ -91,6 +91,7 @@ CKEDITOR.lang[ 'en-au' ] = {
 		alignTop: 'Top', // MISSING
 		alignMiddle: 'Middle', // MISSING
 		alignBottom: 'Bottom', // MISSING
+		invalidValue	: 'Invalid value.', // MISSING
 		invalidHeight: 'Height must be a number.', // MISSING
 		invalidWidth: 'Width must be a number.', // MISSING
 		invalidCssLength: 'Value specified for the "%1" field must be a positive number with or without a valid CSS measurement unit (px, %, in, cm, mm, em, ex, pt, or pc).', // MISSING

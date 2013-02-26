@@ -73,15 +73,15 @@ CKEDITOR.lang[ 'ar' ] = {
 		confirmNewPage: 'ستفقد أي متغييرات اذا لم تقم بحفظها اولا. هل أنت متأكد أنك تريد صفحة جديدة؟',
 		confirmCancel: 'بعض الخيارات قد تغيرت. هل أنت متأكد من إغلاق مربع النص؟',
 		options: 'خيارات',
-		target: 'Target', // MISSING
+		target: 'هدف الرابط',
 		targetNew: 'New Window (_blank)', // MISSING
 		targetTop: 'Topmost Window (_top)', // MISSING
 		targetSelf: 'Same Window (_self)', // MISSING
 		targetParent: 'Parent Window (_parent)', // MISSING
-		langDirLTR: 'Left to Right (LTR)', // MISSING
-		langDirRTL: 'Right to Left (RTL)', // MISSING
-		styles: 'Style', // MISSING
-		cssClasses: 'Stylesheet Classes', // MISSING
+		langDirLTR: 'اليسار لليمين (LTR)',
+		langDirRTL: 'اليمين لليسار (RTL)',
+		styles: 'نمط',
+		cssClasses: 'فئات التنسيق',
 		width: 'العرض',
 		height: 'الإرتفاع',
 		align: 'محاذاة',
@@ -91,6 +91,7 @@ CKEDITOR.lang[ 'ar' ] = {
 		alignTop: 'أعلى',
 		alignMiddle: 'وسط',
 		alignBottom: 'أسفل',
+		invalidValue	: 'Invalid value.', // MISSING
 		invalidHeight: 'الارتفاع يجب أن يكون عدداً.',
 		invalidWidth: 'العرض يجب أن يكون عدداً.',
 		invalidCssLength: 'Value specified for the "%1" field must be a positive number with or without a valid CSS measurement unit (px, %, in, cm, mm, em, ex, pt, or pc).', // MISSING

@@ -466,9 +466,9 @@ CKEDITOR.STYLE_OBJECT = 3;
 			includeReadonly = ignoreReadonly || def.includeReadonly;
 
 		// If the read-only inclusion is not available in the definition, try
-		// to get it from the document data.
+		// to get it from the root data (most often it's the editable).
 		if ( includeReadonly == undefined )
-			includeReadonly = document.getCustomData( 'cke_includeReadonly' );
+			includeReadonly = range.root.getCustomData( 'cke_includeReadonly' );
 
 		// Get the DTD definition for the element. Defaults to "span".
 		var dtd = CKEDITOR.dtd[ elementName ] || ( isUnknownElement = true, CKEDITOR.dtd.span );
@@ -831,8 +831,9 @@ CKEDITOR.STYLE_OBJECT = 3;
 	}
 
 	function applyObjectStyle( range ) {
-		var parent = range.getCommonAncestor( true, true ),
-			element = new CKEDITOR.dom.elementPath( parent, range.root ).contains( this.element, 1 );
+		// Selected or parent element. (#9651)
+		var start = range.getEnclosedNode() || range.getCommonAncestor( false, true ),
+			element = new CKEDITOR.dom.elementPath( start, range.root ).contains( this.element, 1 );
 
 		element && !element.isReadOnly() && setupElement( element, this );
 	}

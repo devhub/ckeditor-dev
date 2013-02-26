@@ -5,7 +5,7 @@
 
 (function() {
 	var template = '<a id="{id}"' +
-		' class="cke_button cke_button__{name} cke_button_{state}"' +
+		' class="cke_button cke_button__{name} cke_button_{state} {cls}"' +
 		( CKEDITOR.env.gecko && CKEDITOR.env.version >= 10900 && !CKEDITOR.env.hc ? '' : '" href="javascript:void(\'{titleJs}\')"' ) +
 		' title="{title}"' +
 		' tabindex="-1"' +
@@ -27,9 +27,10 @@
 
 	template += ' onkeydown="return CKEDITOR.tools.callFunction({keydownFn},event);"' +
 		' onfocus="return CKEDITOR.tools.callFunction({focusFn},event);" ' +
+		' onmousedown="return CKEDITOR.tools.callFunction({mousedownFn},event);" ' +
 		( CKEDITOR.env.ie ? 'onclick="return false;" onmouseup' : 'onclick' ) + // #188
 			'="CKEDITOR.tools.callFunction({clickFn},this);return false;">' +
-		'<span class="cke_button_icon cke_button__{name}_icon" style="{style}"';
+		'<span class="cke_button_icon cke_button__{iconName}_icon" style="{style}"';
 
 
 	template += '>&nbsp;</span>' +
@@ -39,7 +40,7 @@
 
 	var templateArrow = '<span class="cke_button_arrow">' +
 		// BLACK DOWN-POINTING TRIANGLE
-	( CKEDITOR.env.hc ? '&#9660;' : '&nbsp;' ) +
+	( CKEDITOR.env.hc ? '&#9660;' : '' ) +
 		'</span>';
 
 	var btnArrowTpl = CKEDITOR.addTemplate( 'buttonArrow', templateArrow ),
@@ -131,13 +132,7 @@
 					element.focus();
 				},
 				execute: function() {
-					// IE 6 needs some time before execution (#7922)
-					if ( CKEDITOR.env.ie && CKEDITOR.env.version < 7 )
-						CKEDITOR.tools.setTimeout( function() {
-						this.button.click( editor );
-					}, 0, this );
-					else
-						this.button.click( editor );
+					this.button.click( editor );
 				},
 				attach: function( editor ) {
 					this.button.attach( editor );
@@ -163,7 +158,29 @@
 				return retVal;
 			});
 
-			instance.clickFn = clickFn = CKEDITOR.tools.addFunction( instance.execute, instance );
+			var selLocked = 0;
+
+			var mousedownFn = CKEDITOR.tools.addFunction( function() {
+				// Opera: lock to prevent loosing editable text selection when clicking on button.
+				if ( CKEDITOR.env.opera ) {
+					var edt = editor.editable();
+					if ( edt.isInline() && edt.hasFocus ) {
+						editor.lockSelection();
+						selLocked = 1;
+					}
+				}
+			});
+
+			instance.clickFn = clickFn = CKEDITOR.tools.addFunction( function() {
+
+				// Restore locked selection in Opera.
+				if ( selLocked ) {
+					editor.unlockSelection( 1 );
+					selLocked = 0;
+				}
+
+				instance.execute();
+			});
 
 
 			// Indicate a mode sensitive button.
@@ -205,23 +222,52 @@
 				}
 			}
 
+			// For button that has text-direction awareness on selection path.
+			if ( this.directional ) {
+				editor.on( 'contentDirChanged', function( evt ) {
+					var el = CKEDITOR.document.getById( this._.id ),
+						icon = el.getFirst();
+
+					var pathDir = evt.data;
+
+					// Make a minor direction change to become style-able for the skin icon.
+					if ( pathDir !=  editor.lang.dir )
+						el.addClass( 'cke_' + pathDir );
+					else
+						el.removeClass( 'cke_ltr' ).removeClass( 'cke_rtl' );
+
+					// Inline style update for the plugin icon.
+					icon.setAttribute( 'style', CKEDITOR.skin.getIconStyle( iconName, pathDir == 'rtl', this.icon, this.iconOffset ) );
+				}, this );
+			}
+
 			if ( !command )
 				stateName += 'off';
 
-			var name = this.name || this.command;
+			var name = this.name || this.command,
+				iconName = name;
+
+			// Check if we're pointing to an icon defined by another command. (#9555)
+			if ( this.icon && !( /\./ ).test( this.icon ) ) {
+				iconName = this.icon;
+				this.icon = null;
+			}
 
 			var params = {
 				id: id,
 				name: name,
+				iconName: iconName,
 				label: this.label,
+				cls: this.className || '',
 				state: stateName,
 				title: this.title,
 				titleJs: env.gecko && env.version >= 10900 && !env.hc ? '' : ( this.title || '' ).replace( "'", '' ),
 				hasArrow: this.hasArrow ? 'true' : 'false',
 				keydownFn: keydownFn,
+				mousedownFn: mousedownFn,
 				focusFn: focusFn,
 				clickFn: clickFn,
-				style: CKEDITOR.skin.getIconStyle( name, ( editor.lang.dir == 'rtl' ), this.icon, this.iconOffset ),
+				style: CKEDITOR.skin.getIconStyle( iconName, ( editor.lang.dir == 'rtl' ), this.icon, this.iconOffset ),
 				arrowHtml: this.hasArrow ? btnArrowTpl.output() : ''
 			};
 
