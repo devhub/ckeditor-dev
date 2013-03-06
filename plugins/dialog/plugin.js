@@ -816,7 +816,7 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 			if ( CKEDITOR.dialog._.currentZIndex === null )
         //Calculate z index
         Modal = CKEDITOR.dh.Backbone.BootstrapModal;
-        CKEDITOR.dialog._.currentZIndex = Modal.count + 1040;
+        CKEDITOR.dialog._.currentZIndex = Modal.count + 10400;
         Modal.count++;
 			this._.element.getFirst().setStyle( 'z-index', CKEDITOR.dialog._.currentZIndex);
 
