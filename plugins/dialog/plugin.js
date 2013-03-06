@@ -803,7 +803,6 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 				}, 0 );
 			}
 
-
 			// First, set the dialog to an appropriate size.
 			this.resize( this._.contentSize && this._.contentSize.width || definition.width || definition.minWidth, this._.contentSize && this._.contentSize.height || definition.height || definition.minHeight );
 
@@ -815,8 +814,11 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 
 			// Set z-index.
 			if ( CKEDITOR.dialog._.currentZIndex === null )
-				CKEDITOR.dialog._.currentZIndex = this._.editor.config.baseFloatZIndex;
-			this._.element.getFirst().setStyle( 'z-index', CKEDITOR.dialog._.currentZIndex += 10 );
+        //Calculate z index
+        Modal = CKEDITOR.dh.Backbone.BootstrapModal;
+        CKEDITOR.dialog._.currentZIndex = Modal.count + 1040;
+        Modal.count++;
+			this._.element.getFirst().setStyle( 'z-index', CKEDITOR.dialog._.currentZIndex);
 
 			// Maintain the dialog ordering and dialog cover.
 			if ( CKEDITOR.dialog._.currentTop === null ) {
@@ -970,7 +972,7 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 		hide: function() {
 			if ( !this.parts.dialog.isVisible() )
 				return;
-
+      Modal.count--;
 			this.fire( 'hide', {} );
 			this._.editor.fire( 'dialogHide', this );
 			// Reset the tab page.
@@ -1959,9 +1961,10 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 	function showCover( editor ) {
 		var win = CKEDITOR.document.getWindow();
 		var config = editor.config,
-			backgroundColorStyle = config.dialog_backgroundCoverColor || 'white',
+			backgroundColorStyle = config.dialog_backgroundCoverColor || 'black',
 			backgroundCoverOpacity = config.dialog_backgroundCoverOpacity,
-			baseFloatZIndex = config.baseFloatZIndex,
+			//baseFloatZIndex = config.baseFloatZIndex, 
+			baseFloatZIndex = CKEDITOR.dialog._.currentZIndex - 1,
 			coverKey = CKEDITOR.tools.genKey( backgroundColorStyle, backgroundCoverOpacity, baseFloatZIndex ),
 			coverElement = covers[ coverKey ];
 
