@@ -2950,8 +2950,8 @@ CKEDITOR.DIALOG_RESIZE_BOTH = 3;
 		openDialog: function( dialogName, callback ) {
 			var dialog = null, dialogDefinitions = CKEDITOR.dialog._.dialogDefinitions[ dialogName ];
 
-			if ( CKEDITOR.dialog._.currentTop === null )
-				showCover( this );
+			//if ( CKEDITOR.dialog._.currentTop === null )
+			//	showCover( this );
 
 			// If the dialogDefinition is already loaded, open it immediately.
 			if ( typeof dialogDefinitions == 'function' ) {
