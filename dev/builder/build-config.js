@@ -36,7 +36,7 @@ var CKBUILDER_CONFIG = {
 		tabletools: 1,
 		toolbar: 1,
 		undo: 1,
-		wysiwygarea: 1
+		wysiwygarea: 1,
 		//a11yhelp: 1,  // Accessibility help
 		//about: 1, // About CKEditor
 		//bidi: 1, // Make possible to change text-direction
@@ -47,7 +47,7 @@ var CKBUILDER_CONFIG = {
 		//flash: 1, // Add flash
 		//format: 1, // Apply block level format styles
 		//forms: 1, // Add forms
-		//horizontalrule: 1, // Add an <hr>
+		horizontalrule: 1, // Add an <hr>
 		//iframe: 1, // Igrame dialog
 		//image: 1, // Image dialog not included because we use ours
 		//liststyle: 1,
@@ -55,11 +55,11 @@ var CKBUILDER_CONFIG = {
 		//maximize: 1, // Maximize editor insize browser window
 		//newpage: 1, // Adds toolbar button which clears editing area and creates a new page
 		//pagebreak: 1, // Inserts horizontal page breaks
-		//pastefromword: 1, // Paste from word
-		//pastetext: 1, // Allows to always paste as plain text
+		pastefromword: 1, // Paste from word
+		pastetext: 1, // Allows to always paste as plain text
 		//preview: 1, // Displays preview of the documentj
 		//print: 1,
-		//removeformat: 1, // Toolbar button to remobe all text styling
+		removeformat: 1 // Toolbar button to remobe all text styling
 		//save: 1,  // Saves contents and sends to server
 		//selectall: 1, // Button to select contents of editor
 		//showblocks: 1, // Allows visualization of block level elements
