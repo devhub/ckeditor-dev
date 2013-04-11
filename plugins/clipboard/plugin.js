@@ -902,11 +902,12 @@
 			}
 			// Cut, Copy - check if the selection is not empty
 			else {
-				var sel = editor.getSelection(),
+				var sel = editor.getSelection();
+        if (sel != null){
 					ranges = sel.getRanges();
-				retval = sel.getType() != CKEDITOR.SELECTION_NONE && !( ranges.length == 1 && ranges[ 0 ].collapsed );
+          retval = sel.getType() != CKEDITOR.SELECTION_NONE && !( ranges.length == 1 && ranges[ 0 ].collapsed );
+        }
 			}
-
 			return retval ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED;
 		}
 	}

@@ -93,10 +93,9 @@ CKEDITOR.command = function( editor, commandDefinition ) {
 	 * @returns {Boolean} Whether this command is allowed.
 	 */
 	this.checkAllowed = function() {
-		if ( typeof allowed == 'boolean' )
-			return allowed;
-
-		return allowed = editor.filter.checkFeature( this );
+		//if ( typeof allowed == 'boolean' ) Breaks setToolbar
+		//	return allowed;
+		return editor.filter.checkFeature( this );
 	};
 
 	CKEDITOR.tools.extend( this, commandDefinition, {

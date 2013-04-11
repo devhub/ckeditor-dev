@@ -162,15 +162,16 @@ CKEDITOR.plugins.add( 'richcombo', {
 					clickFn: clickFn
 				};
 
-				function updateState() {
+        instance.updateState = function()
+				{
 					var state = this.modes[ editor.mode ] ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED;
 					this.setState( editor.readOnly && !this.readOnly ? CKEDITOR.TRISTATE_DISABLED : state );
 					this.setValue( '' );
-				}
+				};
 
-				editor.on( 'mode', updateState, this );
+				editor.on( 'mode', instance.updateState, this );
 				// If this combo is sensitive to readOnly state, update it accordingly.
-				!this.readOnly && editor.on( 'readOnly', updateState, this );
+				!this.readOnly && editor.on( 'readOnly', instance.updateState, this );
 
 				var keyDownFn = CKEDITOR.tools.addFunction( function( ev, element ) {
 					ev = new CKEDITOR.dom.event( ev );
