@@ -404,17 +404,7 @@
 
         $(space).find('.cke_top').html(generateToolbarHtml( this ));
 
-        if ( CKEDITOR.env.ie ) // IE...
-        {
-          var table = space.parentNode.parentNode.parentNode;
-          table.style.display = 'none';
-          // Force refresh
-          var h = table.scrollHeight;
-          table.style.display = '';
-        }
-
         this.fire('switchedToolbar');
-
       };
 
 			// Manage editor focus  when navigating the toolbar.
