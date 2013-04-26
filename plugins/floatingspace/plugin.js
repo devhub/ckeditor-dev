@@ -253,7 +253,7 @@
         }
         else
         {
-          floatSpace.setStyle( alignSide, pixelate( ( mode == 'pin' ? pinnedOffsetX : dockedOffsetX ) + newLeft + pageScrollX ) );
+          floatSpace.setStyle( alignSide, pixelate( ( mode == 'pin' ? pinnedOffsetX : dockedOffsetX ) + offset + scroll ) );
         }
 
 			};
