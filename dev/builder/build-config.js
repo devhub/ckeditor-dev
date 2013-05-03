@@ -28,7 +28,7 @@ var CKBUILDER_CONFIG = {
 		htmlwriter: 1, // Provides flexible HTML output
 		indent: 1, // Required by enter key
 		justify: 1,
-		link: 1,
+		//link: 1, We'll be using our own
 		list: 1,
 		resize: 1, // Allows column resize
 		sourcearea: 1,
