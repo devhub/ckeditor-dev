@@ -23,6 +23,7 @@
 			// Add listener with lower priority than that in themedui creator.
 			// Thereby floatingspace will be created only if themedui wasn't used.
 			editor.on( 'loaded', function() {
+        if (editor.elementMode != CKEDITOR.ELEMENT_MODE_INLINE) return;
 				attach( editor );
 			}, null, null, 20 );
 		}
