@@ -31,7 +31,7 @@ var CKBUILDER_CONFIG = {
 		//link: 1, We'll be using our own
 		list: 1,
 		resize: 1, // Allows column resize
-		sourcearea: 1,
+		//sourcearea: 1, We'll be using our own
 		table: 1,
 		tabletools: 1,
 		toolbar: 1,
