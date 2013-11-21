@@ -77,14 +77,28 @@ The visual representation of a rich combo widget looks as follows:
 	-webkit-box-shadow: 0 1px 0 rgba(255,255,255,.5), 0 0 2px rgba(255,255,255,.15) inset, 0 1px 0 rgba(255,255,255,.15) inset;
 	box-shadow: 0 1px 0 rgba(255,255,255,.5), 0 0 2px rgba(255,255,255,.15) inset, 0 1px 0 rgba(255,255,255,.15) inset;
 
-	background: #ffffff;
+	background: #e4e4e4;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e4e4e4));
+	background-image: -moz-linear-gradient(top, #ffffff, #e4e4e4);
+	background-image: -webkit-linear-gradient(top, #ffffff, #e4e4e4);
+	background-image: -o-linear-gradient(top, #ffffff, #e4e4e4);
+	background-image: -ms-linear-gradient(top, #ffffff, #e4e4e4);
+	background-image: linear-gradient(top, #ffffff, #e4e4e4);
+	filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#ffffffff', endColorstr='#ffe4e4e4');
 }
 
 /* Different states of the container. */
 .cke_combo_off a.cke_combo_button:hover,
 .cke_combo_off a.cke_combo_button:focus
 {
-	background: #f2f2f2;
+	background: #ccc;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#ccc));
+	background-image: -moz-linear-gradient(top, #f2f2f2, #ccc);
+	background-image: -webkit-linear-gradient(top, #f2f2f2, #ccc);
+	background-image: -o-linear-gradient(top, #f2f2f2, #ccc);
+	background-image: -ms-linear-gradient(top, #f2f2f2, #ccc);
+	background-image: linear-gradient(top, #f2f2f2, #ccc);
+	filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#fff2f2f2', endColorstr='#ffcccccc');
 
 	outline: none;
 }
@@ -98,7 +112,14 @@ The visual representation of a rich combo widget looks as follows:
 	-webkit-box-shadow: 0 1px 0 rgba(255,255,255,.5), 0 1px 5px rgba(0,0,0,.6) inset;
 	box-shadow: 0 1px 0 rgba(255,255,255,.5), 0 1px 5px rgba(0,0,0,.6) inset;
 
-	background: #aaa;
+	background: #b5b5b5;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#aaa), to(#cacaca));
+	background-image: -moz-linear-gradient(top, #aaa, #cacaca);
+	background-image: -webkit-linear-gradient(top, #aaa, #cacaca);
+	background-image: -o-linear-gradient(top, #aaa, #cacaca);
+	background-image: -ms-linear-gradient(top, #aaa, #cacaca);
+	background-image: linear-gradient(top, #aaa, #cacaca);
+	filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#ffaaaaaa', endColorstr='#ffcacaca');
 }
 
 .cke_combo_on a.cke_combo_button:hover,
