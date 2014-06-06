@@ -43,9 +43,10 @@ var CKBUILDER_CONFIG = {
 		//blockquote: 1, // Block-level quotation
 		//div: 1,// Adds the command to allow groups content blocks under a div
 		//elementspath: 1, // Bottom element path
+    fakeobjects: 1,
 		//find: 1, // Find replace dialog
 		//flash: 1, // Add flash
-		//format: 1, // Apply block level format styles
+		format: 1, // Apply block level format styles
 		//forms: 1, // Add forms
 		horizontalrule: 1, // Add an <hr>
 		//iframe: 1, // Igrame dialog
