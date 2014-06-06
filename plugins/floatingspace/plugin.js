@@ -99,7 +99,7 @@
 					spaceHeight = spaceRect.height,
 					pageScrollX = scrollOffset( 'left' );
 
-        // Fixed top 
+        // Fixed top
         if ( !mode && editor.elementMode == CKEDITOR.ELEMENT_MODE_INLINE){
           mode = 'topfixed';
           changeMode('topfixed');
@@ -250,7 +250,7 @@
 
         if (editor.elementMode == CKEDITOR.ELEMENT_MODE_INLINE){
           width = floatSpace.getSize('width', false);
-          floatSpace.setStyle('marginLeft', -(width/2) + "px");
+          floatSpace.setStyle('marginLeft', -((width/2)+(142)) + "px");
         }
         else
         {
