@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
- * For licensing, see LICENSE.html or http://ckeditor.com/license
+ * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
 
 var CKBUILDER_CONFIG = {
@@ -12,7 +12,14 @@ var CKBUILDER_CONFIG = {
 		'.gitignore',
 		'.gitattributes',
 		'.mailmap',
-		'.idea'
+		'.DS_Store',
+		'tests',
+		'package.json',
+		'bender.js',
+		'.bender',
+		'bender-err.log',
+		'bender-out.log',
+		'node_modules'
 	],
 	plugins: {
     basicstyles: 1, // Basic formatting commands: Bold Italic Underline .....
@@ -27,6 +34,18 @@ var CKBUILDER_CONFIG = {
 		font: 1, // Font size and family
 		htmlwriter: 1, // Provides flexible HTML output
 		indent: 1, // Required by enter key
+		//find: 1,
+		//flash: 1,
+		//floatingspace: 1,
+		//font: 1,
+		//format: 1,
+		//forms: 1,
+		//horizontalrule: 1,
+		//htmlwriter: 1,
+		//iframe: 1,
+		//image: 1,
+		//indentlist: 1,
+		//indentblock: 1,
 		justify: 1,
 		//link: 1, We'll be using our own
 		list: 1,

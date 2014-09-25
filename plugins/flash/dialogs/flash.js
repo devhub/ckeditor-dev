@@ -1,9 +1,9 @@
 ﻿/**
- * @license Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
- * For licensing, see LICENSE.html or http://ckeditor.com/license
+ * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
 
-(function() {
+( function() {
 	// It is possible to set things in three different places.
 	// 1. As attributes in the object tag.
 	// 2. As param tags under the object tag.
@@ -22,62 +22,62 @@
 	var attributesMap = {
 		id: [ {
 			type: ATTRTYPE_OBJECT, name: 'id'
-		}],
+		} ],
 		classid: [ {
 			type: ATTRTYPE_OBJECT, name: 'classid'
-		}],
+		} ],
 		codebase: [ {
 			type: ATTRTYPE_OBJECT, name: 'codebase'
-		}],
+		} ],
 		pluginspage: [ {
 			type: ATTRTYPE_EMBED, name: 'pluginspage'
-		}],
+		} ],
 		src: [ {
 			type: ATTRTYPE_PARAM, name: 'movie'
 		}, {
 			type: ATTRTYPE_EMBED, name: 'src'
 		}, {
 			type: ATTRTYPE_OBJECT, name: 'data'
-		}],
+		} ],
 		name: [ {
 			type: ATTRTYPE_EMBED, name: 'name'
-		}],
+		} ],
 		align: [ {
 			type: ATTRTYPE_OBJECT, name: 'align'
-		}],
+		} ],
 		'class': [ {
 			type: ATTRTYPE_OBJECT, name: 'class'
 		}, {
 			type: ATTRTYPE_EMBED, name: 'class'
-		}],
+		} ],
 		width: [ {
 			type: ATTRTYPE_OBJECT, name: 'width'
 		}, {
 			type: ATTRTYPE_EMBED, name: 'width'
-		}],
+		} ],
 		height: [ {
 			type: ATTRTYPE_OBJECT, name: 'height'
 		}, {
 			type: ATTRTYPE_EMBED, name: 'height'
-		}],
+		} ],
 		hSpace: [ {
 			type: ATTRTYPE_OBJECT, name: 'hSpace'
 		}, {
 			type: ATTRTYPE_EMBED, name: 'hSpace'
-		}],
+		} ],
 		vSpace: [ {
 			type: ATTRTYPE_OBJECT, name: 'vSpace'
 		}, {
 			type: ATTRTYPE_EMBED, name: 'vSpace'
-		}],
+		} ],
 		style: [ {
 			type: ATTRTYPE_OBJECT, name: 'style'
 		}, {
 			type: ATTRTYPE_EMBED, name: 'style'
-		}],
+		} ],
 		type: [ {
 			type: ATTRTYPE_EMBED, name: 'type'
-		}]
+		} ]
 	};
 
 	var names = [ 'play', 'loop', 'menu', 'quality', 'scale', 'salign', 'wmode', 'bgcolor', 'base', 'flashvars', 'allowScriptAccess', 'allowFullScreen' ];
@@ -86,8 +86,12 @@
 		type: ATTRTYPE_EMBED, name: names[ i ]
 	}, {
 		type: ATTRTYPE_PARAM, name: names[ i ]
-	}];
-	names = [ 'allowFullScreen', 'play', 'loop', 'menu' ];
+	} ];
+
+	// These attributes are "true" by default and not present in editor data (when "true").
+	// Note that, though default value of "allowFullScreen" is "true", it is not listed here.
+	// "allowFullScreen" is present in editor data regardless of the value (#7634).
+	names = [ 'play', 'loop', 'menu' ];
 	for ( i = 0; i < names.length; i++ )
 		attributesMap[ names[ i ] ][ 0 ][ 'default' ] = attributesMap[ names[ i ] ][ 1 ][ 'default' ] = true;
 
@@ -177,7 +181,7 @@
 							paramMap[ attrDef.name ].setAttribute( 'value', value );
 						else {
 							var param = CKEDITOR.dom.element.createFromHtml( '<cke:param></cke:param>', objectNode.getDocument() );
-							param.setAttributes({ name: attrDef.name, value: value } );
+							param.setAttributes( { name: attrDef.name, value: value } );
 							if ( objectNode.getChildCount() < 1 )
 								param.appendTo( objectNode );
 							else
@@ -262,10 +266,10 @@
 					}
 					if ( makeEmbedTag ) {
 						embedNode = CKEDITOR.dom.element.createFromHtml( '<cke:embed></cke:embed>', editor.document );
-						embedNode.setAttributes({
+						embedNode.setAttributes( {
 							type: 'application/x-shockwave-flash',
 							pluginspage: 'http://www.macromedia.com/go/getflashplayer'
-						});
+						} );
 						if ( objectNode )
 							embedNode.appendTo( objectNode );
 					}
@@ -344,7 +348,7 @@
 
 									if ( evt.data && evt.data.value )
 										updatePreview( evt.data.value );
-								});
+								} );
 								// Sync when input value changed.
 								this.getInputElement().on( 'change', function( evt ) {
 
@@ -359,7 +363,7 @@
 							hidden: true,
 							// v-align with the 'src' field.
 							// TODO: We need something better than a fixed size here.
-							style: 'display:inline-block;margin-top:10px;',
+							style: 'display:inline-block;margin-top:14px;',
 							label: editor.lang.common.browseServer
 						}
 						]
@@ -664,5 +668,5 @@
 			}
 			]
 		};
-	});
-})();
+	} );
+} )();
