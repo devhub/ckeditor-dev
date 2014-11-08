@@ -122,8 +122,6 @@
 
 			path = overridePath || ( icon && icon.path ) || '';
 			offset = overrideOffset || ( icon && icon.offset );
-      var offsetIndex = offset / 24;
-      if (CKEDITOR.env.hidpi) offset = offsetIndex * 24.69;
 			bgsize = overrideBgsize || ( icon && icon.bgsize ) || '16px';
 
 			return path &&
